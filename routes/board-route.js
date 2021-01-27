@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { upload } = require('../modules/multers');
 const { pool } = require('../modules/mysql-pool');
-const { err } = require('../modules/util');
+const { err, alert } = require('../modules/util');
 const pugs = { 
 	css: 'board', 
 	js: 'board', 
@@ -18,13 +19,22 @@ router.get('/create', (req, res, next) => {
 	res.render('board/create', pug);
 });
 
-router.post('/save', async (req, res) => {
+router.post('/save', upload.single('upfile'), async (req, res, next) => {
 	try {
 		const { title, content, writer } = req.body;
-		const sql = 'INSERT INTO board SET title=?, content=?, writer=?';
+		let sql = 'INSERT INTO board SET title=?, content=?, writer=?';
 		const value = [title, content, writer];
-		const r = await pool.query(sql, value);
-		res.json(r[0]);
+		if(req.banExt) {
+			res.send(alert(`${req.banExt} 파일은 업로드 할 수 없습니다.`));
+		}
+		else {
+			if(req.file) {
+				sql += ', orifile=?, savefile=?';
+				value.push(req.file.originalname, req.file.filename);
+			}
+			const r = await pool.query(sql, value);
+			res.redirect('/board');
+		}
 	}
 	catch(e) {
 		next(err(e));

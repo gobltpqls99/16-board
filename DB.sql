@@ -19,15 +19,16 @@ USE `sb`;
 
 -- 테이블 sb.board 구조 내보내기
 CREATE TABLE IF NOT EXISTS `board` (
-  `id` int DEFAULT NULL,
-  `title` varchar(50) DEFAULT NULL,
-  `content` text,
-  `writer` varchar(50) DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  `orifile` varchar(50) DEFAULT NULL,
-  `savefile` varchar(50) DEFAULT NULL,
-  `readnum` int DEFAULT NULL,
-  `uid` int DEFAULT NULL
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `writer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `orifile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `savefile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `readnum` int unsigned NOT NULL DEFAULT '0',
+  `uid` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 테이블 데이터 sb.board:~0 rows (대략적) 내보내기
