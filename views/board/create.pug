@@ -4,7 +4,6 @@ block js
 	script(src="/js/editor.js")
 block content
 	.create-wrapper.wrapper
-		include ../include/title-bar
 		form(action="/board/save" method="post" onsubmit="return onSave(this);" enctype="multipart/form-data")
 			ul.list-wrapper
 				li.list-wrap
@@ -19,6 +18,7 @@ block content
 					.title 첨부파일
 					.list
 						input.form-control-file(type="file" name="upfile")
+						.text-success.pt-3 * jpg png gif pdf zip ppt xls doc hwp txt만 업로드 가능합니다.
 				li.list-wrap
 					.w-100
 						textarea#content.form-control(name="content")
