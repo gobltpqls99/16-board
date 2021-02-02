@@ -4,7 +4,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const { err } = require('./modules/util');
-
+const session = require('./modules/session');
+const local = require('./modules/local')
 
 /************* Server **************/
 app.listen(process.env.PORT, () => {
@@ -21,6 +22,11 @@ app.locals.pretty = true;
 /************* Post/Body **************/
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+
+/* SESSION */
+app.use(session());
+app.use(local());
 
 /************* Router **************/
 const authRouter = require('./routes/auth-route');

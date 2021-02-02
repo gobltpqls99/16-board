@@ -1,11 +1,12 @@
 const express = require('express');
 const moment = require('moment');
 const path = require('path');
-const { upload, imgExt } = require('../modules/multers');
+const { upload, imgExt } = require('../modules/multer');
 const { pool } = require('../modules/mysql-pool');
 const { err, alert, extName, srcPath } = require('../modules/util');
-const pagers = require('../modules/pagers');
+const pagers = require('../modules/pager');
 const router = express.Router();
+const { isUser, isGuest } = require('../modules/auth');
 const pugs = { 
 	css: 'board', 
 	js: 'board', 

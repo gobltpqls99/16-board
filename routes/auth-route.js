@@ -20,12 +20,13 @@ router.post('/logon', async(req, res, next) => {
 	r = await pool.query(sql, value); 
 	if(r[0].length == 1) {
 		compare = await bcrypt.compare(userpw + process.env.BCRYPT_SALT, r[0][0].userpw);
-		if(compare)res.send('로그인 됨');
+		if(compare) {
+			req.session.user
+			res.send('로그인 됨');
+		}
 		else res.send(alert(msg));
 	}
-	else {
-		res.send(alert(msg));		
-	}
+	else res.send(alert(msg));
 })
 
 router.get('/login', async (req, res, next) => {
