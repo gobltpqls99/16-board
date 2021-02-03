@@ -26,8 +26,9 @@ const err = (code, msg) => {
 	}
 }
 
-const alert = (msg) => {
-	return `<script>alert('${msg}'); history.go(-1);</script>`;
+const alert = (msg, loc) => {
+	if(loc) return `<script>alert('${msg}'); location.href="${loc}";</script>`;
+	else return `<script>alert('${msg}'); history.go(-1);</script>`;
 }
 
 const extName = (filename) => {
@@ -38,4 +39,8 @@ const srcPath = (filename) => {
 	return `/storages/${filename.substr(0, 9)}/${filename}`;
 }
 
-module.exports = { err, alert, extName, srcPath }
+const realPath = (filename) => {
+	return path.join(__dirname, '../uploads', filename.substr(0, 9), filename);
+}
+
+module.exports = { err, alert, extName, srcPath, realPath }

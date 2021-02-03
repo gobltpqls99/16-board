@@ -1,4 +1,3 @@
-
 function onLogon(f) {
 	if(f.userid.value.trim() == "") {
 		f.userid.focus();
@@ -10,7 +9,6 @@ function onLogon(f) {
 	}
 	return true;
 }
-
 
 
 function comment(el, cmt, cls) {

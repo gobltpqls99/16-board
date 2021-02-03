@@ -5,7 +5,7 @@ const app = express();
 const path = require('path');
 const { err } = require('./modules/util');
 const session = require('./modules/session');
-const local = require('./modules/local')
+const local = require('./modules/local');
 
 /************* Server **************/
 app.listen(process.env.PORT, () => {
@@ -23,8 +23,7 @@ app.locals.pretty = true;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-
-/* SESSION */
+/************* SESSION **************/
 app.use(session());
 app.use(local());
 
@@ -33,7 +32,6 @@ const authRouter = require('./routes/auth-route');
 const boardRouter = require('./routes/board-route');
 const apiRouter = require('./routes/api-route');
 const galleryRouter = require('./routes/gallery-route');
-const { Console } = require('console');
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/storages', express.static(path.join(__dirname, 'uploads')));
