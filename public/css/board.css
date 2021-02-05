@@ -240,6 +240,22 @@
   padding-top: 0.325em;
 }
 
+.change-wrapper .list-wrapper .list-wrap:nth-child(3) .list .legacy {
+  padding: 0.5em 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.change-wrapper .list-wrapper .list-wrap:nth-child(3) .list .legacy img {
+  max-width: 80px;
+  max-height: 80px;
+}
+
+.change-wrapper .list-wrapper .list-wrap:nth-child(3) .list .legacy a {
+  padding-top: 0.35em;
+}
+
 .change-wrapper .list-wrapper .list-wrap:nth-child(4) {
   padding-top: 2em;
 }
