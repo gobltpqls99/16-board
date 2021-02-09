@@ -17,6 +17,7 @@ const pugs = {
 	headerTitle: 'Node/Express를 활용한 갤러리' 
 }
 
+
 router.get(['/', '/list'], async (req, res, next) => {
 	let sql, value, r, r2, rs, pager;
 	sql = `SELECT count(id) FROM gallery`;
@@ -44,6 +45,7 @@ router.get(['/', '/list'], async (req, res, next) => {
 	console.log(pager);
 	res.render('gallery/list', { ...pugs, rs, pager });
 });
+
 
 router.get('/create', isUser, (req, res, next) => {
 	res.render('gallery/create', pugs);
