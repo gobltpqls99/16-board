@@ -86,7 +86,18 @@ router.get('/api/view/:id', async (req, res, next) => {
 
 
 router.get('/download', async(req, res, next) => {
-
+try {
+let sql, value, savefile, rs, r;
+savefile = req.query.file.split('/').pop();
+sql = 'SELECT orifile FROM gallery_file WHERE savefile = ?';
+value = [ savefile ];
+r = aeait pool.query(sql, value);
+orifile = r[0][0].orifile;
+res.download(realPath(savefile), orifile);
+}
+catch(e) {
+	next(err(e.message || e));
+}
 	const file = path.join(__dirname, req.query.file.replace('/storage', '../uploads'));
 	res.download(file); 
 });
