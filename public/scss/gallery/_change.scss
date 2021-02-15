@@ -1,4 +1,4 @@
-.create-wrapper {
+.change-wrapper {
 	.list-wrapper {
 		border-top: 2px solid $colorWhite;
 		border-bottom: 2px solid $colorWhite;
@@ -7,15 +7,17 @@
 		.list-wrap {
 			margin: 0.5em 0;
 			@include flex($SB, $CT);
+			.bt-minus {cursor: pointer;}
             &.file-wrapper {
-                @include flex($SB, $CT);
-                flex-grow: 1;
+                @include flex($FS, $CT);
                 .file-wrap {
-                    @include 
-                    .legacy{
-                    @include flex($FS, $CT);
-                    img {max-width: 40px; max-height: 40px;}
-                    }
+					flex-grow: 1;
+                    @include flex ($SB, $CT);
+                    .legacy {
+						@include flex($FS, $CT);
+						img {max-width: 40px; max-height: 40px;}
+						> :last-child {cursor: pointer;}
+					}
                 }
             }
 			.title {
