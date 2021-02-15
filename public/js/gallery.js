@@ -2,6 +2,45 @@ var swiperIdx = 0;
 var swiperSrc;
 var swiper;
 
+function onApiRemove(el, id) {
+	if(confirm('첨부파일을 삭제하시겠습니까?')) {
+		$.get('/gallery/api/remove/'+id, function(r){
+			if(r.code == 200) {
+				$(el).parents('.list-wrap').remove();
+				$(".list-file-wrap > .bts").show();
+			}
+		});
+	}
+}
+
+function onChgPlus(el) {
+	if($(".list-file-wrap > .list-wrap").length < 10) {
+		var html = '';
+		html += '<div class="list-wrap file-wrapper">'; 
+		html += '<div class="title">첨부이미지</div>';
+		html += '<div class="file-wrap">';
+		html += '<div class="list">';
+		html += '<input class="form-control-file" type="file" name="upfile">';
+		html += '</div>';
+		html += '<div class="bts">';
+		html += '<span class="bt-minus mr-2" onclick="onChgMinus(this);">';
+		html += '<i class="fa fa-minus-circle text-danger"></i>';
+		html += '</span>';
+		html += '</div>';
+		html += '</div>';
+		html += '</div>';
+		$(".list-file-wrap").append(html);
+	}
+	if($(".list-file-wrap > .list-wrap").length >= 10) {
+		$(".list-file-wrap > .bts").hide();
+	}
+}
+
+function onChgMinus(el) {
+	console.log($(el).parents('.list-wrap'));
+	$(el).parents('.list-wrap').remove();
+	$(".list-file-wrap > .bts").show();
+}
 
 function onPlus(el) {
 	if($(".file-wrapper .file-wrap").length < 9) {
@@ -31,25 +70,34 @@ function onSave(f) {
 		f.title.focus();
 		return false;
 	}
-	var isFile = false;
-	if(Array.isArray(f.upfile)) {
-		for(var i=0; i<f.upfile.length; i++) {
-			if(f.upfile[i].files.length == 1) {
-				isFile = true;
-				break;
-			}
-		}
-	}
-	else {
-		if(f.upfile.files.length == 1) isFile = true;
-	}
-	
-	if(!isFile) {
-		alert('첨부이미지는 1개 이상 등록하셔야 합니다.');
+	if(!fileValid(f)) {
+		alert("첨부파일은 1개 이상 등록하셔야 합니다.");
 		return false;
 	}
 	return true;
 }
+
+function fileValid(f) {
+	var isFile = false;
+	if(f.upfile) {
+		if(f.upfile.length) {
+			for(var i=0; i<f.upfile.length; i++) {
+				if(f.upfile[i].files.length == 1) {
+					isFile = true;
+					break;
+				}
+			}
+		}
+		else {
+			if(f.upfile.files.length == 1) isFile = true;
+		}
+	}
+	console.log($(".legacy img").length);
+	if($(".legacy img").length > 0) isFile = true;
+	return isFile;
+}
+
+
 
 function onModalShow(el, e, id) {
 	var html = '';
@@ -59,6 +107,18 @@ function onModalShow(el, e, id) {
 	$(".modal-wrapper").addClass('active');
 	$('.modal-wrapper .loader').show();
 	$('.modal-wrapper .modal-wrap').removeClass('active');
+	/* $.ajax({
+		url: '/gallery/api/view/'+id,
+		type: 'get',
+		dataType: 'json',
+		success: function(r) {
+			console.log(r);
+		},
+		error: function(xhr, status, error) {
+			console.log(xhr, status, error);
+		}
+	}); */
+
 	$.get('/gallery/api/view/'+id, function(r){
 		swiperSrc = r.src;
 		console.log(r);
