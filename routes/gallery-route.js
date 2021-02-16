@@ -1,9 +1,10 @@
 const express = require('express');
 const moment = require('moment');
+const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const ip = require('request-ip');
-const { uploadImg, imgExt } = require('../modules/multer');
+const { uploadImg, imgExt, upload } = require('../modules/multer');
 const { pool, sqlMiddle: sql } = require('../modules/mysql-pool');
 const { err, alert, extName, srcPath, realPath, datetime } = require('../modules/util');
 const pagers = require('../modules/pager');
@@ -16,6 +17,36 @@ const pugs = {
 	tinyKey: process.env.TINY_KEY, 
 	headerTitle: 'Node/Express를 활용한 갤러리' 
 }
+
+router.post('/update', isUser, uploadImg.array('upfile'), async(req, res, next) => {
+	try {
+		let sql, rs, r, value;
+		let delfile = JSON.parse(req.body.delfile);
+		for(let v of req.files) {
+			let id = _.find(delfile, { name: v.originalname}).id;
+			if(id){
+				sql = 'SELECT sqvefile FROM gallery_file WHERE id='+id;
+				console.log(sql);
+				r = await pool.query(sql);
+				await fs.remove(realPath(r[0][0].savefile));
+				sql = 'DELETE FROM gallery_file WHERE id='+id;
+				await pool.query(sql);
+			}
+		}
+		sql = 'UPDATE gallery SET title=?, writer=?, content=? WHERE id=?';
+		value = [ req.body.title, req.body.writer, req.body.content, req.body.id ];
+		r = await pool.query(sql);
+		for(let v of req.files) {
+			sql = `INSERT INTO gallery_file SET savefile=?, orifile=?, fid=?`;
+			value = [v.filename, v.originalname, req.body.id];
+			await pool.query(sql, value);
+		}
+		res.redirect('/gallery');
+	}
+	catch(e){
+		next(err(e.message || e));
+	}
+});
 
 router.get('/api/remove/:id', isUser,  async(req, res, next) => {
 	try {
@@ -81,7 +112,7 @@ router.get(['/', '/list'], async (req, res, next) => {
 		let sql, value, r, r2, rs, pager;
 		sql = `SELECT count(id) FROM gallery`;
 		r = await pool.query(sql);
-		pager = pagers(req.query.page || 1, r[0][0]['count(id)']);
+		pager = pagers(req.query.page || 1, r[0][0]['count(id)'], {listCnt: 20});
 		pager.router = 'gallery';
 		sql = `SELECT * FROM gallery LIMIT ${pager.startIdx}, ${pager.listCnt}`;
 		r = await pool.query(sql);
