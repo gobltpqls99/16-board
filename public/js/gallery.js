@@ -142,6 +142,7 @@ function onModalShow(el, e, id) {
 
 	$.get('/gallery/api/view/'+id, function(r){
 		swiperSrc = r.src;
+
 		for(var i in r.src) {
 			html += '<div class="swiper-slide">';
 			html += '<img class="mw-100" src="'+r.src[i]+'" alt="image">';
