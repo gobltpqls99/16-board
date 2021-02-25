@@ -62,4 +62,4 @@ const realPath = (filename) => {
 	return path.join(__dirname, '../uploads', filename.substr(0, 9), filename);
 }
 
-module.exports = { err, alert, extName, srcPath, realPath }
+module.exports = { err, alert, extName, srcPath, realPath, datetime }

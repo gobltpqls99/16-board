@@ -11,7 +11,10 @@ block content
 			li.grid-sizer
 			each v in rs
 				li.grid-item(onclick=`onModalShow(this, event, ${v.id})`)
+					img.w-100(src=`${v.src[0]}` alt="img")
 					.grid-inside
+						.ani(style=`background-image: url(${v.src[0]})`)
+						.ani(style=`background-image: url(${v.src[1] || v.src[0]})`)
 						if v.src[1]
 							img.w-100.ani(src=`${v.src[0]}` alt="img")
 						else 

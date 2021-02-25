@@ -4,7 +4,7 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const ip = require('request-ip');
-const { uploadImg, imgExt, upload } = require('../modules/multer');
+const { uploadImg, imgExt } = require('../modules/multer');
 const { pool, sqlMiddle: sql } = require('../modules/mysql-pool');
 const { err, alert, extName, srcPath, realPath, datetime } = require('../modules/util');
 const pagers = require('../modules/pager');
@@ -18,14 +18,14 @@ const pugs = {
 	headerTitle: 'Node/Express를 활용한 갤러리' 
 }
 
-router.post('/update', isUser, uploadImg.array('upfile'), async(req, res, next) => {
+router.post('/update', isUser, uploadImg.array('upfile'), async (req, res, next) => {
 	try {
 		let sql, rs, r, value;
 		let delfile = JSON.parse(req.body.delfile);
 		for(let v of req.files) {
-			let id = _.find(delfile, { name: v.originalname}).id;
-			if(id){
-				sql = 'SELECT sqvefile FROM gallery_file WHERE id='+id;
+			let id = _.find(delfile, {name: v.originalname}).id;
+			if(id) {
+				sql = 'SELECT savefile FROM gallery_file WHERE id='+id;
 				console.log(sql);
 				r = await pool.query(sql);
 				await fs.remove(realPath(r[0][0].savefile));
@@ -34,8 +34,8 @@ router.post('/update', isUser, uploadImg.array('upfile'), async(req, res, next) 
 			}
 		}
 		sql = 'UPDATE gallery SET title=?, writer=?, content=? WHERE id=?';
-		value = [ req.body.title, req.body.writer, req.body.content, req.body.id ];
-		r = await pool.query(sql);
+		value = [req.body.title, req.body.writer, req.body.content, req.body.id];
+		r = await pool.query(sql, value);
 		for(let v of req.files) {
 			sql = `INSERT INTO gallery_file SET savefile=?, orifile=?, fid=?`;
 			value = [v.filename, v.originalname, req.body.id];
@@ -43,33 +43,34 @@ router.post('/update', isUser, uploadImg.array('upfile'), async(req, res, next) 
 		}
 		res.redirect('/gallery');
 	}
-	catch(e){
+	catch(e) {
 		next(err(e.message || e));
 	}
 });
 
-router.get('/api/remove/:id', isUser,  async(req, res, next) => {
+router.get('/api/remove/:id', isUser, async (req, res, next) => {
 	try {
 		let sql, rs, r, value;
 		sql = `SELECT gallery_file.* FROM gallery_file LEFT JOIN gallery ON gallery.id = gallery_file.fid WHERE gallery_file.id=? AND gallery.uid=?`;
-		value = [ req.params.id, req.session.user.id ];
+		value = [req.params.id, req.session.user.id];
 		r = await pool.query(sql, value);
 		if(r[0][0]) {
 			await fs.remove(realPath(r[0][0].savefile));
 			sql = 'DELETE FROM gallery_file WHERE id='+req.params.id;
 			r = await pool.query(sql);
-			res.json({ code: 200 });
+			res.json({code: 200});
 		}
-		else res.status(500).json({ code:500, error: '삭제에 실패했습니다.' });
+		else res.status(500).json({code: 500, error: '삭제에 실패했습니다.'});
 	}
-	catch(e){
+	catch(e) {
 		res.status(500).json(e);
 	}
 });
 
-router.get('/change/:id', isUser, async(req, res, next) => {
+router.get('/change/:id', isUser, async (req, res, next) => {
 	try {
 		let sql, value, rs, r;
+		//sql = `SELECT gallery.*, gallery_file.id as file_id FROM gallery LEFT JOIN gallery_file ON gallery.id = gallery_file.fid WHERE gallery.id = ${req.params.id}`;
 		sql = 'SELECT * FROM gallery WHERE id='+req.params.id;
 		r = await pool.query(sql);
 		rs = r[0][0];
@@ -79,30 +80,30 @@ router.get('/change/:id', isUser, async(req, res, next) => {
 		for(let v of rs.files) v.src = srcPath(v.savefile);
 		res.render('gallery/change', { ...pugs, rs });
 	}
-	catch(e){
+	catch(e) {
 		next(err(e.message || e));
 	}
 });
 
-router.get('/delete/:id',isUser, async (req, res, next) => {
+router.get('/delete/:id', isUser, async (req, res, next) => {
 	try {
 		let sql, value, r, rs;
 		sql = 'SELECT savefile FROM gallery_file WHERE fid='+req.params.id;
 		r = await pool.query(sql);
 		for(let v of r[0]) {
 			await fs.remove(realPath(v.savefile));
-		};
+		}
 		sql = 'DELETE FROM gallery WHERE id=? AND uid=?';
-		value =[ req.params.id, req.session.user.id ];
+		value = [req.params.id, req.session.user.id];
 		r = await pool.query(sql, value);
-		if(r[0].affectedRows > 0){
+		if(r[0].affectedRows > 0) {
 			res.redirect('/gallery');
 		}
 		else {
-			res.send(alert('삭제에 실패하였습니다.'));
+			res.send(alert('삭제에 실패하였습니다.'))
 		}
 	}
-	catch(e){
+	catch(e) {
 		next(err(e.message || e));
 	}
 });
@@ -135,8 +136,8 @@ router.get(['/', '/list'], async (req, res, next) => {
 		// console.log(pager);
 		res.render('gallery/list', { ...pugs, rs, pager });
 	}
-	catch {
-		next(err(message || e));
+	catch(e) {
+		next(err(e.message || e));
 	}
 });
 
@@ -164,7 +165,6 @@ router.post('/save', isUser, uploadImg.array('upfile', 10), async (req, res, nex
 	catch(e) {
 		next(err(e.message || e));
 	}
-	
 });
 
 router.get('/api/view/:id', async (req, res, next) => {
@@ -180,17 +180,16 @@ router.get('/api/view/:id', async (req, res, next) => {
 		res.json(rs);
 	}
 	catch(e) {
-		res.json(new Error(e.message || e));
+		res.json(e.message || e);
 	}
 });
 
-
-router.get('/download', async(req, res, next) => {
+router.get('/download', async (req, res, next) => {
 	try {
 		let sql, value, savefile, orifile, r;
 		savefile = req.query.file.split('/').pop();
-		sql = 'SELECT orifile FROM gallery_file WHERE savefile = ?';
-		value = [ savefile ];
+		sql = 'SELECT orifile FROM gallery_file WHERE savefile=?';
+		value = [savefile];
 		r = await pool.query(sql, value);
 		orifile = r[0][0].orifile;
 		res.download(realPath(savefile), orifile);

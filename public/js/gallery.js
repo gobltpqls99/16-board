@@ -75,7 +75,7 @@ function onSave(f) {
 		alert("첨부파일은 1개 이상 등록하셔야 합니다.");
 		return false;
 	}
-	if($(f).attr('name' == 'changeForm')) {
+	if($(f).attr('name') == 'changeForm') {
 		addFile(f);
 	}
 	return true;
@@ -86,13 +86,13 @@ function addFile(f) {
 	if(f.upfile.length) {
 		for(var i=0; i<f.upfile.length; i++) {
 			if(f.upfile[i].files.length == 1) {
-				delfile.push({ name: f.upfile[i].files[0].name, id: f.upfile[i].dataset.id });
+				delfile.push({name: f.upfile[i].files[0].name, id: f.upfile[i].dataset.id})
 			}
 		}
 	}
 	else {
 		if(f.upfile.files.length == 1) {
-			delfile.push({ name: f.upfile[i].files.name, id: f.upfile[i].dataset.id });
+			delfile.push({name: f.upfile[i].files[0].name, id: f.upfile[i].dataset.id})
 		}
 	}
 	f.delfile.value = JSON.stringify(delfile);
@@ -128,21 +128,11 @@ function onModalShow(el, e, id) {
 	$(".modal-wrapper").addClass('active');
 	$('.modal-wrapper .loader').show();
 	$('.modal-wrapper .modal-wrap').removeClass('active');
-	/* $.ajax({
-		url: '/gallery/api/view/'+id,
-		type: 'get',
-		dataType: 'json',
-		success: function(r) {
-			console.log(r);
-		},
-		error: function(xhr, status, error) {
-			console.log(xhr, status, error);
-		}
-	}); */
 
 	$.get('/gallery/api/view/'+id, function(r){
 		swiperSrc = r.src;
-
+		console.log(r);
+		// console.log(r);
 		for(var i in r.src) {
 			html += '<div class="swiper-slide">';
 			html += '<img class="mw-100" src="'+r.src[i]+'" alt="image">';
