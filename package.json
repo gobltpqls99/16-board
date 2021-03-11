@@ -26,14 +26,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gobltpqls99/16-modules.git"
+    "url": "git+https://github.com/gobltpqls99/16-board.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gobltpqls99/16-modules/issues"
+    "url": "https://github.com/gobltpqls99/16-board/issues"
   },
-  "homepage": "https://github.com/gobltpqls99/16-modules#readme",
+  "homepage": "https://github.com/gobltpqls99/16-board#readme",
   "description": ""
 }
